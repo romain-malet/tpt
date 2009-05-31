@@ -1,0 +1,8 @@
+#summary The ThreadLocal pattern is used to easily keep track of application instances or locale settings throughout the handling of a request. The ThreadLocal class works like a static variable, with the exception that it is only bound to the current thread! This allows us to use static variables in a thread-safe way.
+#labels Phase-Implementation,ThreadLocal,Thread,Local,Pattern
+
+= Introduction =
+
+ThreadLocal pattern is described here at Vaadin's wiki: [http://dev.itmill.com/wiki/Patterns/ThreadLocale]. The TPTApplication class already implements this pattern, so all you need is to just call TPTApplication.getCurrentApplication() in any portion of your Vaadin-enabled application.
+
+
