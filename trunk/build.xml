@@ -1,0 +1,100 @@
+
+<project name="STOR-M 3" default="dist">
+
+    <!--
+       This script builds all archive system components, producing a complete, ready to use and
+       deploy solution.
+    -->
+
+
+    <dirname property="base.dir" file="${ant.file}" />
+
+    <property file="${base.dir}${file.separator}local.properties" />
+    <property file="${base.dir}${file.separator}build.properties" />
+    <property file="${base.dir}${file.separator}version.properties" />
+
+
+    <!-- Common sets and paths -->
+    <target name="clean" description="Cleans all output stuff from all components">
+        <subant antfile="build.xml" buildpath="modules/storm3updater" target="clean"/>
+        <subant antfile="build.xml" buildpath="modules/storm3core" target="clean"/>
+        <subant antfile="build.xml" buildpath="modules/storm3server" target="clean"/>
+        <subant antfile="build.xml" buildpath="modules/storm3web" target="clean"/>
+        <subant antfile="build.xml" buildpath="modules/storm3client" target="clean"/>
+    </target>
+
+    <target name="dist" description="Compile, test and release all archive system components"
+            depends="clean,update-version">
+        <subant antfile="build.xml" buildpath="modules/storm3updater" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/storm3core" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/storm3server" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/storm3web" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/storm3client" target="default"/>
+        <antcall target="installer:client"/>
+        <antcall target="updater:client"/>
+    </target>
+
+    <target name="make" description="Quick compile and test all archive system components"
+            depends="clean,update-version">
+        <subant antfile="build.xml" buildpath="modules/storm3core" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/storm3updater" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/storm3server" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/storm3web" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/storm3client" target="default"/>
+    </target>
+
+    <target name="update-version">
+        <propertyfile
+                file="${base.dir}${file.separator}version.properties">
+            <entry key="build.number" value="${build.number}" />
+        </propertyfile>
+        <propertyfile
+                file="${base.dir}${file.separator}modules${file.separator}storm3core${file.separator}src${file.separator}com${file.separator}alee${file.separator}archive3${file.separator}api${file.separator}version${file.separator}version.properties">
+            <entry key="build.number" value="${build.number}" />
+            <entry key="version.number" value="${version.number}"/>
+            <entry key="api.version" value="${api.version}"/>
+            <entry key="dev.status" value="${dev.status}"/>
+        </propertyfile>
+    </target>
+
+
+    <target name="installer:client">
+        <exec dir="${client.installer.dir}"
+              executable="${install4j.home}${file.separator}bin${file.separator}install4jc">
+            <arg value="-D" />
+            <arg value="alee.archive.release.version=${version.number},alee.archive.release.build=${build.number}" />
+            <arg value="archive-client-installer.install4j" />
+        </exec>
+    </target>
+
+    <target name="updater:client">
+        <echo>
+            Creating client autoupdate package
+        </echo>
+
+        <property name="update.tmp.root" value="modules${file.separator}storm3client${file.separator}dist${file.separator}temp" />
+        <property name="update.tmp.image" value="${update.tmp.root}${file.separator}IMAGE" />
+        <property name="update.tmp.lib" value="${update.tmp.image}${file.separator}lib" />
+
+        <mkdir dir="${update.tmp.root}" />
+        <mkdir dir="${update.tmp.image}" />
+        <mkdir dir="${update.tmp.lib}" />
+
+        <copy todir="${update.tmp.lib}" includeemptydirs="true" overwrite="true">
+            <fileset dir="modules${file.separator}storm3client${file.separator}dist${file.separator}lib" />
+            <fileset file="modules${file.separator}storm3client${file.separator}dist${file.separator}storm3client.jar" />
+        </copy>
+
+        <zip basedir="${update.tmp.root}"
+             destfile="modules${file.separator}storm3client${file.separator}dist${file.separator}client.a3u"
+             compress="true"
+             level="9"
+                />
+
+        <delete dir="${update.tmp.root}" deleteonexit="true" />
+    </target>
+
+    <target name="run:tests">
+    </target>
+
+</project>
