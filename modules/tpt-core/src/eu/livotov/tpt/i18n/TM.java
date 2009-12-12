@@ -18,6 +18,7 @@ package eu.livotov.tpt.i18n;
 
 import com.vaadin.Application;
 import eu.livotov.tpt.TPTApplication;
+import java.io.Serializable;
 
 import java.util.HashMap;
 
@@ -37,7 +38,7 @@ import java.util.HashMap;
  * <p/>
  * <p>For more information please see the corresponding chapter in developer documentation.
  */
-public class TM
+public class TM implements Serializable
 {
 
     /**

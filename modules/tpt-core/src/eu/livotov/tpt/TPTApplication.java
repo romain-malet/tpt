@@ -58,6 +58,7 @@ public abstract class TPTApplication extends Application
      */
     public void init ()
     {
+        currentApplication.set ( this );
         getContext ().addTransactionListener ( this );
         initializeInternationalizationFramework ();
         applicationInit ();
@@ -242,7 +243,7 @@ public abstract class TPTApplication extends Application
         {
             try
             {
-                currentApplication.set ( application );
+                application.currentApplication.set ( application );
                 actualTask.run ();
             }
             catch ( Throwable err )
@@ -252,7 +253,11 @@ public abstract class TPTApplication extends Application
             }
             finally
             {
-                currentApplication.remove ();
+                if ( currentApplication != null )
+                {
+                    currentApplication.remove ();
+                }
+
                 application = null;
                 actualTask = null;
             }

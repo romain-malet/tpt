@@ -13,7 +13,6 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  ******************************************************************************/
-
 package eu.livotov.tpt.gui.widgets;
 
 import com.vaadin.ui.Component;
@@ -37,35 +36,41 @@ import java.util.*;
 public class TPTMultiView extends VerticalLayout
         implements UriFragmentUtility.FragmentChangedListener
 {
+
     /**
      * Internal map, where we'll store all registered views
      */
     private Map<String, Component> views = new HashMap<String, Component> ( 10 );
-
     /**
      * Map to store lazy-loading views. If actual view instance is not present in the "views" map,
      * TPTView will try to find and instantiate it on activation from delayedViews map.
      */
     private Map<String, Class<Component>> delayedViews =
             new HashMap<String, Class<Component>> ( 10 );
-
     /**
      * Name of currently displayed view
      */
     private String currentView;
-
     /**
      * URI manager, that tracks browser address bar changes and automatically switches the view, if
      * enabled.
      */
     private UriFragmentUtility uriManager = new UriFragmentUtility ();
-
     /**
      * URI manager activation flag. When set to <code>false</code>, uri changes will not cause the
      * current view to switch.
      */
     private boolean uriManagerEnabled = false;
-
+    /**
+     * Last fragment, which was set by an URI Fragment Utility. Used to track and eliminate duplicate view activation events
+     */
+    private String lastChangedFragment = "";
+    /**
+     * Contains a failsafe view, to which view manager should switch in case actual view name will be
+     * invalid or view will not exists. If failsafe view is null - an IllegalArgumentException will be thrown on
+     * attempt to switch to non existing view
+     */
+    private String failsafeView;
 
     /**
      * Creates a multiview with uri manager disabled. View is based on VerticalLayout, sets it's
@@ -103,6 +108,27 @@ public class TPTMultiView extends VerticalLayout
     }
 
     /**
+     * Sets the failsafe view name. When you try to switch to a non-existing view and failsafe view name
+     * is defined, view manager will seitch to it (keeping your view parameters as well). If no filesafe
+     * view name is set - an IllegalArgumentException is will be thrown in attempt to go to non existing view.
+     * If failsafe view name will also not exists, then IllegalArgumentException will be thrown.
+     * @param name view name to switch to in case actual view is not found.
+     */
+    public void setFailsafeViewName ( String name )
+    {
+        failsafeView = name;
+    }
+
+    /**
+     * Provides the current failsafe view name (null by default) set by a setFailsafeViewName
+     * @return current failsafe view name
+     */
+    public String getFailsafeViewName()
+    {
+        return failsafeView;
+    }
+
+    /**
      * Registers a new view. If this is a first view, it also becomes an active, e.g. it will be
      * displayed. If this is not a first view - no active view will be changed, you'll need to call
      * switchView(...) to show this view.
@@ -114,7 +140,7 @@ public class TPTMultiView extends VerticalLayout
      * @param view     actual component of a view
      * @return self instance in order to simplify adding multiple views at one line.
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings ( "unchecked" )
     public TPTMultiView addView ( String viewName, Component view )
     {
         if ( !isViewAvailable ( viewName ) )
@@ -166,7 +192,7 @@ public class TPTMultiView extends VerticalLayout
      * @param view     new view component
      * @return self instance to simplify replacing multiple views at one line
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings ( "unchecked" )
     public TPTMultiView replaceView ( String viewName, Component view )
     {
         if ( isViewAvailable ( viewName ) )
@@ -233,13 +259,8 @@ public class TPTMultiView extends VerticalLayout
      */
     public void switchView ( String viewId )
     {
-        final String viewName = getPureViewName ( viewId );
+        final String viewName = ( !views.containsKey ( getPureViewName ( viewId ) ) && failsafeView != null ) ? failsafeView : getPureViewName ( viewId );
         final String viewParameters = getViewParameters ( viewId );
-
-        if ( uriManagerEnabled )
-        {
-            uriManager.setFragment ( viewId );
-        }
 
         if ( viewId == null )
         {
@@ -279,6 +300,12 @@ public class TPTMultiView extends VerticalLayout
                 throw new IllegalArgumentException (
                         String.format ( "View %s does not exists.", viewName ) );
             }
+        }
+
+        if ( uriManagerEnabled )
+        {
+            lastChangedFragment = viewId;
+            uriManager.setFragment ( viewId );
         }
     }
 
@@ -398,7 +425,13 @@ public class TPTMultiView extends VerticalLayout
         if ( uriManagerEnabled &&
                 fragmentChangedEvent.getUriFragmentUtility ().getFragment () != null )
         {
-            switchView ( fragmentChangedEvent.getUriFragmentUtility ().getFragment () );
+            final String fragment = fragmentChangedEvent.getUriFragmentUtility ().getFragment ();
+
+            if ( !fragment.equals ( lastChangedFragment ) )
+            {
+                lastChangedFragment = fragment;
+                switchView ( fragment );
+            }
         }
     }
 
@@ -410,6 +443,7 @@ public class TPTMultiView extends VerticalLayout
      */
     public interface TPTView
     {
+
         /**
          * Called when view is activated, e.g. becomes visible to the user.
          *
@@ -440,7 +474,6 @@ public class TPTMultiView extends VerticalLayout
          */
         public void viewRemoved ();
     }
-
 
     /**
      * Checks if view component implements the TPTView interface and if so, invokes the appropriate
@@ -537,6 +570,4 @@ public class TPTMultiView extends VerticalLayout
             return viewName.substring ( viewName.indexOf ( "/" ) + 1, viewName.length () );
         }
     }
-
-
 }
