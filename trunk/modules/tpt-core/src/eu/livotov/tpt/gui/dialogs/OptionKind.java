@@ -16,11 +16,13 @@
 
 package eu.livotov.tpt.gui.dialogs;
 
+import java.io.Serializable;
+
 /**
  * Describes option dialog button types (options) as well as result codes, as result code from
  * OptionDialog corresponds to the button pressed.
  */
-public enum OptionKind
+public enum OptionKind implements Serializable
 {
     OK,
     CANCEL,

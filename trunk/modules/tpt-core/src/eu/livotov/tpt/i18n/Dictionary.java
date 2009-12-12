@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,7 +34,7 @@ import java.util.StringTokenizer;
  * A dictionary object, that holds translation data for all instances of a single application. In
  * most cases this class shoud not be instantiated directly, use a TM front-end instead.
  */
-public class Dictionary
+public class Dictionary implements Serializable
 {
     /**
      * Contains references to loaded properties files for the set of languages
