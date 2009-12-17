@@ -1,6 +1,6 @@
                 TOOLKIT PRODUCTIVITY TOOLS
 
-                       version 1.0.0 RC1
+                       version 1.0.0
 
 
 == CHANGES HISTORY
@@ -12,6 +12,12 @@ Legend:
 * - Bugfix
 ? - Information
 
+
+17.12.2009 v.1.0.0
+
+* - Numerous small bugfixes
+? - Added developer handbook
++ - Added new demo application
 
 
 09.11.2009 v.1.0.0 RC1
