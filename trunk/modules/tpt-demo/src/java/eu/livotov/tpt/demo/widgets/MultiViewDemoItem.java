@@ -12,6 +12,7 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.InlineDateField;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -261,7 +262,7 @@ public class MultiViewDemoItem implements DemoItem, Serializable
 
             controller.addView ( "view1", new ViewOne () );
             controller.addView ( "view2", new ViewTwo () );
-            controller.addView ( "view3", new ViewThree () );
+            controller.addView ( "view3", new ViewThree() );
 
             controller.setSizeFull ();
             root.addComponent ( controller );

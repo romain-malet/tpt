@@ -33,7 +33,7 @@ import java.util.*;
  * from an URL programmatically or by a end user but also pass custom parameters from an URL to a
  * view each time it is become active.
  */
-public class TPTMultiView extends VerticalLayout
+public class TPTMultiView <T extends Component> extends VerticalLayout
         implements UriFragmentUtility.FragmentChangedListener
 {
 
@@ -45,8 +45,8 @@ public class TPTMultiView extends VerticalLayout
      * Map to store lazy-loading views. If actual view instance is not present in the "views" map,
      * TPTView will try to find and instantiate it on activation from delayedViews map.
      */
-    private Map<String, Class<Component>> delayedViews =
-            new HashMap<String, Class<Component>> ( 10 );
+    private Map<String, Class<T>> delayedViews =
+            new HashMap<String, Class<T>> ( 10 );
     /**
      * Name of currently displayed view
      */
@@ -146,7 +146,7 @@ public class TPTMultiView extends VerticalLayout
         if ( !isViewAvailable ( viewName ) )
         {
             views.put ( viewName, view );
-            delayedViews.put ( viewName, ( Class<Component> ) view.getClass () );
+            delayedViews.put ( viewName, (Class<T>) view.getClass () );
             fireViewAttachedMessage ( view );
 
             if ( views.size () == 1 )
@@ -171,16 +171,18 @@ public class TPTMultiView extends VerticalLayout
      * @param viewName  view name
      * @param viewClass class, that represnets the view. Class must have a default constructor.
      */
-    public void addView ( String viewName, Class<Component> viewClass )
+    public void addView ( String viewName, Class<T> viewClass )
     {
         if ( !isViewAvailable ( viewName ) )
         {
             views.put ( viewName, null );
             delayedViews.put ( viewName, viewClass );
-        }
+        } else
+        {
         throw new IllegalArgumentException ( String.format (
                 "View %s already exists. Use updateView() if you want to replace it with the new component.",
                 viewName ) );
+        }
     }
 
     /**
@@ -203,14 +205,14 @@ public class TPTMultiView extends VerticalLayout
             {
                 switchView ( null );
                 views.put ( viewName, view );
-                delayedViews.put ( viewName, ( Class<Component> ) view.getClass () );
+                delayedViews.put ( viewName, ( Class<T> ) view.getClass () );
                 fireViewAttachedMessage ( view );
                 switchView ( viewName );
             }
             else
             {
                 views.put ( viewName, view );
-                delayedViews.put ( viewName, ( Class<Component> ) view.getClass () );
+                delayedViews.put ( viewName, ( Class<T> ) view.getClass () );
                 fireViewAttachedMessage ( view );
             }
             return this;
