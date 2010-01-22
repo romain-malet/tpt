@@ -1,6 +1,6 @@
                 TOOLKIT PRODUCTIVITY TOOLS
 
-                       version 1.0.0
+                       version 1.0.1
 
 
 == CHANGES HISTORY
@@ -11,6 +11,12 @@ Legend:
 + - New feature / improvement
 * - Bugfix
 ? - Information
+
+
+??.01.2010 v.1.0.1
+
+* - fixed bug #4
+? - aligned with Vaadin 6.2.2
 
 
 17.12.2009 v.1.0.0
