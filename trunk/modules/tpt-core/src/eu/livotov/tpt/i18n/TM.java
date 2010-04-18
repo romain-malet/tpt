@@ -55,11 +55,20 @@ public class TM implements Serializable
      * another method, that accepts application instance as a parameter.
      *
      * @param key key to get string for
+     * @param params - set of String.format parameters to parse
      * @return key translation, for the current application instance language
      */
-    public static String get ( final String key )
+    public static String get ( final String key, Object... params )
     {
-        return getDictionary ().get ( key );
+        String phrase = getDictionary ().get ( key );
+
+        if ( params != null && params.length>0)
+        {
+            return String.format(phrase, params);
+        } else
+        {
+            return phrase;
+        }
     }
 
     /**
@@ -67,12 +76,32 @@ public class TM implements Serializable
      *
      * @param app application to look for the keys in
      * @param key key to get string for
+     * @param params - set of String.format parameters to parse
      * @return key translation, for the current application instance language
      */
-    public static String get ( Application app, final String key )
+    public static String get ( Application app, final String key, Object... params )
     {
-        return getDictionary ( app ).get ( app, key );
+        String phrase = getDictionary ( app ).get ( app, key );
+
+        if ( params != null && params.length>0)
+        {
+            return String.format(phrase, params);
+        } else
+        {
+            return phrase;
+        }
     }
+
+    /**
+     * Proxy method for easy setting the default language for the current app dictionary
+     * @param lang
+     */
+    public static void setDefaultLanguage( String lang )
+    {
+        getDictionary().setDefaultLanguage(lang);
+    }
+
+
 
     /**
      * Provides the dictionary object, used for all instances of the current application. Note, that

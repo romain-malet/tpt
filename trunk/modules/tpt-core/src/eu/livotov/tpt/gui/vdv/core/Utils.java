@@ -1,0 +1,50 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package eu.livotov.tpt.gui.vdv.core;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
+
+/**
+ *
+ * @author dlivotov
+ */
+public class Utils
+{
+
+    public static String md5 ( String input )
+    {
+        String res = "";
+
+        try
+        {
+            MessageDigest algorithm = MessageDigest.getInstance ( "MD5" );
+            algorithm.reset ();
+            algorithm.update ( input.getBytes () );
+            byte[] md5 = algorithm.digest ();
+            String tmp = "";
+            for ( int i = 0; i < md5.length; i++ )
+            {
+                tmp = ( Integer.toHexString ( 0xFF & md5[i] ) );
+                if ( tmp.length () == 1 )
+                {
+                    res += "0" + tmp;
+                }
+                else
+                {
+                    res += tmp;
+                }
+            }
+        }
+        catch ( NoSuchAlgorithmException ex )
+        {
+            res = UUID.randomUUID ().toString ();
+        }
+
+        return res;
+    }
+}

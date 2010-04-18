@@ -68,7 +68,8 @@ public class TPTMultiView <T extends Component> extends VerticalLayout
     /**
      * Contains a failsafe view, to which view manager should switch in case actual view name will be
      * invalid or view will not exists. If failsafe view is null - an IllegalArgumentException will be thrown on
-     * attempt to switch to non existing view
+     * attempt to switch to non existing view. When a failsafe view is activated, the non-existed view name is passed there
+     * as a view parameter. Original parameter (if were present) will be passed slash-separated after the view name: nonexview/param
      */
     private String failsafeView;
 
@@ -109,7 +110,7 @@ public class TPTMultiView <T extends Component> extends VerticalLayout
 
     /**
      * Sets the failsafe view name. When you try to switch to a non-existing view and failsafe view name
-     * is defined, view manager will seitch to it (keeping your view parameters as well). If no filesafe
+     * is defined, view manager will switch to it (keeping your view parameters as well). If no filesafe
      * view name is set - an IllegalArgumentException is will be thrown in attempt to go to non existing view.
      * If failsafe view name will also not exists, then IllegalArgumentException will be thrown.
      * @param name view name to switch to in case actual view is not found.
@@ -544,6 +545,11 @@ public class TPTMultiView <T extends Component> extends VerticalLayout
      */
     protected String getPureViewName ( String viewName )
     {
+        if ( viewName == null)
+        {
+            return "";
+        }
+        
         if ( !viewName.contains ( "/" ) )
         {
             return viewName;
@@ -563,7 +569,7 @@ public class TPTMultiView <T extends Component> extends VerticalLayout
      */
     protected String getViewParameters ( String viewName )
     {
-        if ( !viewName.contains ( "/" ) )
+        if ( viewName == null || !viewName.contains ( "/" ) )
         {
             return "";
         }
