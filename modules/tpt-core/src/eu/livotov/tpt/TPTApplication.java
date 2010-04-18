@@ -17,11 +17,14 @@ package eu.livotov.tpt;
 
 import com.vaadin.Application;
 import com.vaadin.service.ApplicationContext;
+import com.vaadin.terminal.gwt.server.WebApplicationContext;
+import com.vaadin.ui.Window;
 import eu.livotov.tpt.i18n.Dictionary;
 import eu.livotov.tpt.i18n.TM;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -59,6 +62,7 @@ public abstract class TPTApplication extends Application
     public void init ()
     {
         currentApplication.set ( this );
+        cleanupPreviousResources();
         getContext ().addTransactionListener ( this );
         initializeInternationalizationFramework ();
         applicationInit ();
@@ -151,7 +155,7 @@ public abstract class TPTApplication extends Application
     @Override
     public void close ()
     {
-        super.close ();
+        super.close();
     }
 
     /**
@@ -164,22 +168,7 @@ public abstract class TPTApplication extends Application
      */
     public void transactionStart ( Application application, Object o )
     {
-        if ( application == TPTApplication.this )
-        {
-            currentApplication.set ( this );
-
-// The following block is commented out as Vaadin has to set the user name from HttpServletRequest automatically,
-// if such user exists.
-//            if ( o != null )
-//            {
-//                HttpServletRequest request = ( HttpServletRequest ) o;
-//
-//                if ( request.getUserPrincipal () != null )
-//                {
-//                    setUser ( "" + request.getUserPrincipal ().getName () );
-//                }
-//            }
-        }
+        currentApplication.set ( this );
     }
 
     /**
@@ -190,10 +179,7 @@ public abstract class TPTApplication extends Application
      */
     public void transactionEnd ( Application application, Object o )
     {
-        if ( application == TPTApplication.this )
-        {
-            currentApplication.remove ();
-        }
+        currentApplication.remove ();
     }
 
     /**
@@ -225,6 +211,27 @@ public abstract class TPTApplication extends Application
     public static TPTApplication getCurrentApplication ()
     {
         return currentApplication.get ();
+    }
+
+    /**
+     * This method cleanups resources from previous app instance. When Vaadin app is created
+     * using CDI injection, http session does not die after app.close() which results the same
+     * application instance to be used for the next application.
+     */
+    private void cleanupPreviousResources()
+    {
+        // Remove all old windows, if any
+        Collection<Window> oldWindows = getWindows();
+        for ( Window w : oldWindows)
+        {
+            removeWindow(w);
+        }
+
+        // Remove all i18n data
+        if ( internationalizationDictionary!=null)
+        {
+            internationalizationDictionary.clear();
+        }
     }
 
     private class TPTRunnable implements Runnable

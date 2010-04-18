@@ -17,9 +17,9 @@ import eu.livotov.tpt.gui.widgets.TPTSizer;
 public abstract class DemoSection extends VerticalLayout
 {
 
-    private Label title = new Label ( getSectionTitle () );
-    private Label info = new Label ( getSectionInformation () );
-    private Panel demoItemsContent = new Panel ();
+    protected  Label title = new Label ( getSectionTitle () );
+    protected  Label info = new Label ( getSectionInformation () );
+    protected  Panel demoItemsContent = new Panel ();
 
     public DemoSection ()
     {

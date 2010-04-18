@@ -290,4 +290,10 @@ public class Dictionary implements Serializable
         }
     }
 
+    public void clear()
+    {
+        languages.clear();
+        countries.clear();
+    }
+
 }

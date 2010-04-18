@@ -1,6 +1,6 @@
                 TOOLKIT PRODUCTIVITY TOOLS
 
-                       version 1.0.1
+                       version 1.1.0
 
 
 == CHANGES HISTORY
@@ -13,10 +13,14 @@ Legend:
 ? - Information
 
 
-??.01.2010 v.1.0.1
+18.04.2010 v.1.1.0
 
++ - TPTMessagePanel utility widget
++ - PDF Document Viewer widget + framework
++ - Simplified i18n message translation, support for in-place output formatting
 * - fixed bug #4
-? - aligned with Vaadin 6.2.2
+* - overall code cleanups
+? - aligned with Vaadin 6.3.0
 
 
 17.12.2009 v.1.0.0

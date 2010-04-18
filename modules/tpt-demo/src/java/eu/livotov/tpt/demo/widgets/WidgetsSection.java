@@ -21,6 +21,7 @@ public class WidgetsSection extends DemoSection
         super ();
         addDemoItem ( new CaptchaDemoItem () );
         addDemoItem ( new SizerDemoItem () );
+        addDemoItem( new MessagePanelDemoItem() );
         addDemoItem ( new LazyLoaderDemoItem () );
         addDemoItem ( new MultiViewDemoItem () );
     }
