@@ -22,6 +22,13 @@ Legend:
 * - overall code cleanups
 ? - aligned with Vaadin 6.3.0
 
+IMPORTANT: PDF Document Viewer depends on IcePDF OpenSource edition (included)
+which is used to render PDF documents at the server side. If you're going to use
+DocumentViewer component, do not forget to iclude IcePDF jars to the classpath as well.
+
+
+
+
 
 17.12.2009 v.1.0.0
 
