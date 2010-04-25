@@ -290,9 +290,15 @@ public class TPTMultiView <T extends Component> extends VerticalLayout
                 }
             }
 
-            removeAllComponents ();
-            addComponent ( views.get ( viewName ) );
-            setExpandRatio ( views.get ( viewName ), 1.0f );
+            // ADDENDUM by Remoun Metyas to avoid spurious detach & attach
+            // if it's just the parameters that have changed.
+            if(!viewName.equals(currentView))
+            {
+              removeAllComponents ();
+              addComponent ( views.get ( viewName ) );
+              setExpandRatio ( views.get ( viewName ), 1.0f );
+            }
+
             fireViewActivatedMessage ( views.get ( viewName ), currentView, viewParameters );
             currentView = viewName;
         }
