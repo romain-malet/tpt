@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
@@ -116,7 +118,8 @@ public class Dictionary implements Serializable
      *                  empty.
      * @param country   2 letter country code, the file being loaded rerefs to. Can be null or
      *                  empty.
-     * @param resource  URL to a property file from classpath resource.
+     * @param resource  URL to a property file from classpath resource. Note, that resource contents must
+     *                  be in UTF-8 encoding
      * @param overwrite if set to false, dictionary will allow any unique url to be loaded only
      *                  once. This is useful ehrn you load translations in the application init or
      *                  constructor method, which is called for all sessions. Having overwrite
@@ -132,7 +135,7 @@ public class Dictionary implements Serializable
         if ( !language.containsKey ( resource.toString () ) || overwrite )
         {
             language.put ( resource.toString (), "1" );
-            loadWords ( lang, country, resource.openStream () );
+            loadWords ( lang, country, new InputStreamReader( resource.openStream (), "utf-8" ));
         }
     }
 
@@ -162,6 +165,43 @@ public class Dictionary implements Serializable
         }
     }
 
+    /**
+     * Loads data into dictionary from a reader object. This allow to eliminate using native2ascii
+     * utility for non-english contents of i18n files
+     *
+     * @param lang    2 letter language code, the file being loaded refers to. Cannot be null or
+     *                empty.
+     * @param country 2 letter country code, the file being loaded rerefs to. Can be null or empty.
+     * @param data    reader instance for the translation property file contents to be loaded.
+     * @throws IOException if any IO error occurs
+     */
+    public void loadWords ( final String lang, final String country, Reader data )
+            throws IOException
+    {
+        Properties language = getLanguageBundle ( lang, country );
+
+        language.load ( data );
+
+        try
+        {
+            data.close ();
+        }
+        catch ( Throwable err )
+        {
+            // no-op
+        }
+    }
+
+    /**
+     * Loads data into dictionary from a reader object. This allow to eliminate using native2ascii
+     * utility for non-english contents of i18n files
+     *
+     * @param lang    2 letter language code, the file being loaded refers to. Cannot be null or
+     *                empty.
+     * @param country 2 letter country code, the file being loaded rerefs to. Can be null or empty.
+     * @param file    i18n file. Note, the contents must be in UTF-8 encoding.
+     * @throws IOException if any IO error occurs
+     */
     public void loadWords ( String lang, String country, File file, boolean overwrite )
             throws IOException
     {
@@ -170,7 +210,7 @@ public class Dictionary implements Serializable
         if ( !language.containsKey ( file.getAbsolutePath () ) || overwrite )
         {
             language.put ( file.getAbsolutePath (), "1" );
-            loadWords ( lang, country, new FileInputStream ( file ) );
+            loadWords ( lang, country, new InputStreamReader (new FileInputStream ( file ), "utf-8") );
         }
 
     }
