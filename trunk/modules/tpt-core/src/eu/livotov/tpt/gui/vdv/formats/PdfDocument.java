@@ -5,9 +5,6 @@
 
 package eu.livotov.tpt.gui.vdv.formats;
 
-import com.vaadin.terminal.Resource;
-import com.vaadin.terminal.StreamResource;
-import eu.livotov.tpt.TPTApplication;
 import eu.livotov.tpt.gui.vdv.api.DocumentRasterProvider;
 import eu.livotov.tpt.gui.vdv.api.PageNumber;
 import eu.livotov.tpt.gui.vdv.api.RasterizedPageProperties;
@@ -20,10 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.imageio.ImageIO;
 import org.icepdf.core.exceptions.PDFException;
@@ -49,12 +43,26 @@ public class PdfDocument implements DocumentRasterProvider
     private float zoom = 1.0f;
     private int pagesCount = 0;
     private PDimension pageSize;
-    private String pageId;
     private File fileCacheFolder;
+
+    private boolean icePdfPresent = false;
 
 
     public PdfDocument( File pdf)
     {
+        icePdfPresent = false;
+
+        try
+        {
+            Class.forName("org.icepdf.core.pobjects.Document");
+            Package.getPackage("org.icepdf.core");
+            icePdfPresent = true;
+        } catch ( Throwable err)
+        {
+            icePdfPresent = false;
+            System.err.println("Warning: no IcePDF files are present on a classpath, you'll be unable to display PDF documents in DocumentViewer. Please download and put the IcePDF core .jar files to your application classpath. You can download latest version from http://www.icepdf.org or just take the bundled files from tpt-demo.war/WEB-INF/lib folder.");
+        }
+
         if ( pdf == null || !pdf.getName().toLowerCase().endsWith(".pdf"))
         {
             //throw new IllegalArgumentException("Document must be a valid PDF file");
@@ -111,7 +119,7 @@ public class PdfDocument implements DocumentRasterProvider
 
     public void closeDocument()
     {
-        if ( pdfDocument != null )
+        if ( icePdfPresent && pdfDocument != null )
         {
             pdfDocument.dispose ();
         }
@@ -121,12 +129,20 @@ public class PdfDocument implements DocumentRasterProvider
 
     protected Dimension getPageSize( int page, float zoom)
     {
-        Image img = getPageImage ( page, zoom);
-        return new Dimension ( img.getWidth ( null ), img.getHeight ( null ) );
+        if ( icePdfPresent)
+        {
+            Image img = getPageImage ( page, zoom);
+            return new Dimension ( img.getWidth ( null ), img.getHeight ( null ) );
+        } else
+        {
+            return new Dimension( 480,640 );
+        }
     }
 
     protected void openDocument () throws PDFException, IOException, PDFSecurityException
     {
+        if ( icePdfPresent)
+        {
             if ( pdfDocument != null )
             {
                 closeDocument ();
@@ -150,6 +166,14 @@ public class PdfDocument implements DocumentRasterProvider
             }
 
             updatePageImageCache (1, 1.0f);
+        } else
+        {
+            fileCacheFolder = new File ( System.getProperty ( "java.io.tmpdir" ) + File.separator + "pdf-noicepdf-stub" );
+            fileCacheFolder.mkdirs ();
+            pagesCount = 1;
+            pageSize = null;
+            pdfDocument = null;
+        }
     }
 
 
@@ -176,7 +200,7 @@ public class PdfDocument implements DocumentRasterProvider
 
     public void invalidate ()
     {
-            if ( pdfDocument != null )
+            if ( icePdfPresent && pdfDocument != null )
             {
                 Page page;
 
@@ -193,37 +217,18 @@ public class PdfDocument implements DocumentRasterProvider
             }
     }
 
-    public Resource getPageResource ( final int page, final float zoom )
-    {
-        StreamResource res = new StreamResource ( new StreamResource.StreamSource ()
-        {
-
-            public InputStream getStream ()
-            {
-                try
-                {
-                    return getPageStream(page, zoom);
-                }
-                catch ( Throwable err )
-                {
-                    err.printStackTrace ();
-                    throw new RuntimeException ( err.getMessage (), err );
-                }
-            }
-        }, pageId, TPTApplication.getCurrentApplication () );
-
-        res.setCacheTime ( 0 );
-        res.setFilename ( UUID.randomUUID ().toString () + "-" + pageId );
-
-        return res;
-    }
-
-    public FileInputStream getPageStream ( int page, float zoom )
+    public InputStream getPageStream ( int page, float zoom )
     {
         try
         {
-            File pps = updatePageImageCache(page, zoom);
-            return new FileInputStream ( pps );
+            if ( icePdfPresent)
+            {
+                File pps = updatePageImageCache(page, zoom);
+                return new FileInputStream ( pps );
+            } else
+            {
+                return PdfDocument.class.getResourceAsStream("icepdf-stub.jpg");
+            }
         }
         catch ( Throwable ex )
         {
@@ -233,16 +238,25 @@ public class PdfDocument implements DocumentRasterProvider
 
     private File generatePageId ( int page, float zoom)
     {
-        pageId = String.format ( "page_%s_%s.jpg", page, zoom );
+        String pageId = "";
 
-        return new File ( fileCacheFolder + File.separator + pageId );
+        if ( icePdfPresent )
+        {
+            pageId = String.format ( "page_%s_%s.jpg", page, zoom );
+        } else
+        {
+            pageId = "icepdf-nojars-stub-page.jpg";
+
+        }
+
+        return new File ( fileCacheFolder + File.separator + pageId);
     }
 
     private File updatePageImageCache ( int page, float zoom)
     {
         File pps = generatePageId ( page, zoom);
         
-        if ( !pps.exists () )
+        if ( icePdfPresent && !pps.exists () )
         {
             try
             {
