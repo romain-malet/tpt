@@ -15,13 +15,13 @@ import eu.livotov.tpt.gui.widgets.TPTMultiView;
  */
 public class TPTViewabeWindow extends Window
 {
-    private TPTMultiView<Component> controller = null;
+    private TPTMultiView controller = null;
 
 
     public TPTViewabeWindow()
     {
         super();
-        controller = new TPTMultiView<Component>(true);
+        controller = new TPTMultiView(true);
         controller.setSizeFull();
         setContent(controller);
     }
@@ -29,12 +29,12 @@ public class TPTViewabeWindow extends Window
     public TPTViewabeWindow( String title, boolean navigational )
     {
         super(title);
-        controller = new TPTMultiView<Component>(navigational);
+        controller = new TPTMultiView(navigational);
         controller.setSizeFull();
         setContent(controller);
     }
 
-    public TPTMultiView<Component> getController()
+    public TPTMultiView getController()
     {
         return controller;
     }
