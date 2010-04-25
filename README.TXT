@@ -1,9 +1,68 @@
-                TOOLKIT PRODUCTIVITY TOOLS
+               
 
-                       version 1.1.0
+
+                TOOLKIT PRODUCTIVITY TOOLS
+      
+            version 1.1.1 , released 26.04.2010
+
+   ( for release notes / what's changed please see below )
+
+
+
+
+
+== WHAT IS THIS
+==
+==================================
+Toolkit Productivity Tools aka TPT is a small server-ide extension to the Vaadin framework and aims
+to provide extended components, utilities and helpers that increases productivity when creating
+Vaadin applications. TPT was born after I've managed to create several Vaadin-based production
+applications and noticed that a number of small same things are commonly used in all apps
+and can be extracted to a common library to boost the productivity and eliminate code duplicates.
+
+
+== DISCLAIMER
+==================================
+TPT provided as is, in hope that somebody else will also find it useful or find some ideas or
+examples for its own code.
+
+
+== LICENSE
+==================================
+TPT is absolutely free and uses version 2 of Apache License, please see LICENSE.TXT for more details.
+
+
+== BUILDING
+==================================
+You'll need Java 1.6+ and Apache Ant 1.6+ to build the project. Just run "ant" from the project base
+folder and it will compile and create tpt.jar and tpt-demo.war files in the "dist" folder. The war
+file is then ready to be dropped to any web contaner or app server to see the small demo showcase of
+the components.
+
+
+== IMPORTANT !!!
+==
+== TPT's DocumentViewer component depends on IcePDF engine to render pdf files.
+== If you're going to use DocumentViewer component, please do not forget to
+== include IcePDF core jar files to your web app. You can take those files from
+== deps folder of this distribution or download from http://www.icepdf.org
+==
+==================================
+
+
+== BUG REPORTING AND OTHER CONTACTS
+==================================
+TPT is hosted at Google Code, please check the homepage: http://code.google.com/p/tpt
+
+- If you want to post a new bug / feature request - please create a ticket here: http://code.google.com/p/tpt/issues/list
+- If you want to share something or need more documentation - take a look at wiki: http://code.google.com/p/tpt/
+- If you want the latest source: download packages or checkout the sources from svn: http://code.google.com/p/tpt/downloads/list
+- You are also welcome to join the project.
+
 
 
 == CHANGES HISTORY
+==
 ==================================
 
 Legend:
@@ -11,6 +70,14 @@ Legend:
 + - New feature / improvement
 * - Bugfix
 ? - Information
+
+
+26.04.2010 v.1.1.1
+
++ - Removed non-required jar files from IcePDF OpenSource edition bundled package to reduce distribution size.
++ - DocumentViewer is equipped with deps protection code - if IcePDF files are not found, it will render an appropriate message instead of raising NoClassDefFound error.
++ - Dependency jar files are also copied to distribution "deps" folder to be more visible.
+? - Added dependencies section into the developer handbook to more transparetly describe the external dependencies.
 
 
 18.04.2010 v.1.1.0
@@ -72,43 +139,3 @@ DocumentViewer component, do not forget to iclude IcePDF jars to the classpath a
 19.02.2009 v.0.0.1
 
 ? Sources separated into a standalone library and moved to contrib section.
-
-
-
-
-== WHAT IS THIS
-==================================
-Toolkit Productivity Tools aka TPT is a small extension to the Vaadin library and aims
-to provide extended widgets, utilities and helpers that increases productivity when creating
-applications using the Toolkit. TPT was created after I managed to create a couple of Toolkit-based
-applications and noticed that a number of small things are commonly used and can be extracted 
-to a common library to boost the productivity and eliminate code duplicates.
-
-
-== BUILDING
-==================================
-You'll need Java 1.6+ and Apache Ant 1.6+ to build the project. Just run "ant" from the project base
-folder and it will compile and create tpt.jar and tpt-demo.war files in the "dist" folder. The war
-file is then ready to be dropped to any web contaner or app server to see the small demo showcase of
-the components.
-
-
-== DISCLAIMER
-==================================
-TPT provided as is, in hope that somebody else will also find it useful or find some ideas or
-examples for its own code. 
-
-
-== LICENSE
-==================================
-TPT is absolutely free and uses version 2 of Apache License, please see LICENSE.TXT for more details.
-
-
-== BUG REPORTING AND OTHER CONTACTS
-==================================
-TPT is hosted at Google Code, please check the homepage: http://code.google.com/p/tpt
-
-- If you want to post a new bug / feature request - please create a ticket here: http://code.google.com/p/tpt/issues/list
-- If you want to share something or need more documentation - take a look at wiki: http://code.google.com/p/tpt/
-- If you want the latest source: download packages or checkout the sources from svn: http://code.google.com/p/tpt/downloads/list
-- You are also welcome to join the project.
