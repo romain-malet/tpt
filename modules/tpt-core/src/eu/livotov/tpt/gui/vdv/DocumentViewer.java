@@ -31,7 +31,7 @@ public class DocumentViewer extends VerticalLayout
     private PageMode viewMode = PageMode.SINGLE_PAGE_MODE;
     private int currentPage = PageNumber.FIRST_PAGE;
 
-    private TPTMultiView<PageRenderer> viewController = new TPTMultiView<PageRenderer>(false);
+    private TPTMultiView viewController = new TPTMultiView(false);
 
 
     /**
