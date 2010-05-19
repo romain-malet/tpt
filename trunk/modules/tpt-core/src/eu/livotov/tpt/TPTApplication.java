@@ -74,6 +74,15 @@ public abstract class TPTApplication extends Application
     }
 
     /**
+     * Self-provider, used to gen an actual instance of the class when it is wrapped to CDI or SessionBean proxy object.
+     * @return self instance
+     */
+    public TPTApplication getSelf()
+    {
+        return this;
+    }
+
+    /**
      * Performs initialization of i18n part of TPT. It creates a dictionary, scans and loads all
      * property files from theme-name/i18n folder.
      */
@@ -168,7 +177,10 @@ public abstract class TPTApplication extends Application
      */
     public void transactionStart ( Application application, Object o )
     {
-        currentApplication.set ( this );
+       if ( application instanceof TPTApplication && ((TPTApplication)application).getSelf() == this )
+       {
+           currentApplication.set ( this );
+       }
     }
 
     /**
@@ -179,7 +191,10 @@ public abstract class TPTApplication extends Application
      */
     public void transactionEnd ( Application application, Object o )
     {
-        currentApplication.remove ();
+       if (application instanceof TPTApplication && ((TPTApplication)application).getSelf() == this )
+       {
+           currentApplication.remove ();
+       }
     }
 
     /**
