@@ -30,9 +30,7 @@ import eu.livotov.tpt.gui.dialogs.ui.OptionDialogButtonsComponent;
  */
 public class OptionDialog extends AbstractDialog implements Button.ClickListener
 {
-    protected Window parentWindow;
     protected OptionDialogButtonsComponent buttonsArea = new OptionDialogButtonsComponent ();
-
     protected OptionDialogResultListener resultReceiver;
 
 
@@ -193,6 +191,8 @@ public class OptionDialog extends AbstractDialog implements Button.ClickListener
 
     protected void finihDialog ( OptionKind result )
     {
+        finishDialogProcessStarted = true;
+
         try
         {
             hideDialog ();
@@ -211,7 +211,10 @@ public class OptionDialog extends AbstractDialog implements Button.ClickListener
 
     public void windowClose ( CloseEvent closeEvent )
     {
-        finihDialog ( OptionKind.CANCEL );
+        if (!finishDialogProcessStarted)
+        {
+            finihDialog ( OptionKind.CANCEL );
+        }
     }
 
     public void enterKeyPressed ()

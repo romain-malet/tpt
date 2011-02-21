@@ -6,7 +6,6 @@ package eu.livotov.tpt.demo;
 
 import eu.livotov.tpt.TPTApplication;
 import eu.livotov.tpt.demo.dialogs.DialogsDemoSection;
-import eu.livotov.tpt.demo.docview.DocumentViewerSection;
 import eu.livotov.tpt.demo.i18n.I18NSection;
 import eu.livotov.tpt.demo.widgets.WidgetsSection;
 import eu.livotov.tpt.demo.windows.WindowsSection;
@@ -29,7 +28,6 @@ public class TPTDemoApplication extends TPTApplication
         mw.addDemoSection ( new WidgetsSection () );
         mw.addDemoSection ( new WindowsSection () );
         mw.addDemoSection ( new I18NSection () );
-        mw.addDemoSection ( new DocumentViewerSection() );
 
 
         addWindow ( mw );

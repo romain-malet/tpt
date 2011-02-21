@@ -138,6 +138,7 @@ public class DownloadDialog extends AbstractDialog implements Button.ClickListen
 
     protected void finishDialog ()
     {
+        finishDialogProcessStarted = true;
         try
         {
             hideDialog ();
@@ -156,7 +157,10 @@ public class DownloadDialog extends AbstractDialog implements Button.ClickListen
 
     public void windowClose ( CloseEvent closeEvent )
     {
-        finishDialog ();
+        if (!finishDialogProcessStarted)
+        {
+            finishDialog ();
+        }
     }
 
     @Override

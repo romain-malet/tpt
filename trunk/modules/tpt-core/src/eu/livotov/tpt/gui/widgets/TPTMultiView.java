@@ -40,13 +40,13 @@ public class TPTMultiView extends VerticalLayout
     /**
      * Internal map, where we'll store all registered views
      */
-    private Map<String, Component> views = new HashMap<String, Component> ( 10 );
+    private Map<String, Component> views = new HashMap<String, Component>(10);
     /**
      * Map to store lazy-loading views. If actual view instance is not present in the "views" map,
      * TPTView will try to find and instantiate it on activation from delayedViews map.
      */
     private Map<String, Class<? extends Component>> delayedViews =
-            new HashMap<String, Class<? extends Component>> ( 10 );
+            new HashMap<String, Class<? extends Component>>(10);
     /**
      * Name of currently displayed view
      */
@@ -55,7 +55,7 @@ public class TPTMultiView extends VerticalLayout
      * URI manager, that tracks browser address bar changes and automatically switches the view, if
      * enabled.
      */
-    private UriFragmentUtility uriManager = new UriFragmentUtility ();
+    private UriFragmentUtility uriManager = new UriFragmentUtility();
     /**
      * URI manager activation flag. When set to <code>false</code>, uri changes will not cause the
      * current view to switch.
@@ -77,12 +77,12 @@ public class TPTMultiView extends VerticalLayout
      * Creates a multiview with uri manager disabled. View is based on VerticalLayout, sets it's
      * witdh and height to 100% and does not contain any margins and borders.
      */
-    public TPTMultiView ()
+    public TPTMultiView()
     {
-        super ();
-        setSizeFull ();
-        setMargin ( false );
-        setSpacing ( false );
+        super();
+        setSizeFull();
+        setMargin(false);
+        setSpacing(false);
     }
 
     /**
@@ -94,17 +94,17 @@ public class TPTMultiView extends VerticalLayout
      *                          cause this component to automatically switch the current view if URI
      *                          text in the browser is changed.
      */
-    public TPTMultiView ( boolean uriManagerEnabled )
+    public TPTMultiView(boolean uriManagerEnabled)
     {
-        this ();
+        this();
         this.uriManagerEnabled = uriManagerEnabled;
 
-        if ( this.uriManagerEnabled )
+        if (this.uriManagerEnabled)
         {
-            uriManager.setWidth ( "0px" );
-            uriManager.setHeight ( "0px" );
-            uriManager.addListener ( this );
-            addComponent ( uriManager );
+            uriManager.setWidth("0px");
+            uriManager.setHeight("0px");
+            uriManager.addListener(this);
+            addComponent(uriManager);
         }
     }
 
@@ -113,15 +113,17 @@ public class TPTMultiView extends VerticalLayout
      * is defined, view manager will switch to it (keeping your view parameters as well). If no filesafe
      * view name is set - an IllegalArgumentException is will be thrown in attempt to go to non existing view.
      * If failsafe view name will also not exists, then IllegalArgumentException will be thrown.
+     *
      * @param name view name to switch to in case actual view is not found.
      */
-    public void setFailsafeViewName ( String name )
+    public void setFailsafeViewName(String name)
     {
         failsafeView = name;
     }
 
     /**
      * Provides the current failsafe view name (null by default) set by a setFailsafeViewName
+     *
      * @return current failsafe view name
      */
     public String getFailsafeViewName()
@@ -141,25 +143,25 @@ public class TPTMultiView extends VerticalLayout
      * @param view     actual component of a view
      * @return self instance in order to simplify adding multiple views at one line.
      */
-    @SuppressWarnings ( "unchecked" )
-    public TPTMultiView addView ( String viewName, Component view )
+    @SuppressWarnings("unchecked")
+    public TPTMultiView addView(String viewName, Component view)
     {
-        if ( !isViewAvailable ( viewName ) )
+        if (!isViewAvailable(viewName))
         {
-            views.put ( viewName, view );
-            delayedViews.put ( viewName, (Class<? extends Component>) view.getClass () );
-            fireViewAttachedMessage ( view );
+            views.put(viewName, view);
+            delayedViews.put(viewName, (Class<? extends Component>) view.getClass());
+            fireViewAttachedMessage(view);
 
-            if ( views.size () == 1 )
+            if (views.size() == 1)
             {
-                switchView ( viewName );
+                switchView(viewName);
             }
 
             return this;
         }
-        throw new IllegalArgumentException ( String.format (
+        throw new IllegalArgumentException(String.format(
                 "View %s already exists. Use updateView() if you want to replace it with the new component.",
-                viewName ) );
+                viewName));
     }
 
     /**
@@ -172,17 +174,17 @@ public class TPTMultiView extends VerticalLayout
      * @param viewName  view name
      * @param viewClass class, that represnets the view. Class must have a default constructor.
      */
-    public void addView ( String viewName, Class<? extends Component> viewClass )
+    public void addView(String viewName, Class<? extends Component> viewClass)
     {
-        if ( !isViewAvailable ( viewName ) )
+        if (!isViewAvailable(viewName))
         {
-            views.put ( viewName, null );
-            delayedViews.put ( viewName, viewClass );
+            views.put(viewName, null);
+            delayedViews.put(viewName, viewClass);
         } else
         {
-        throw new IllegalArgumentException ( String.format (
-                "View %s already exists. Use updateView() if you want to replace it with the new component.",
-                viewName ) );
+            throw new IllegalArgumentException(String.format(
+                    "View %s already exists. Use updateView() if you want to replace it with the new component.",
+                    viewName));
         }
     }
 
@@ -195,32 +197,31 @@ public class TPTMultiView extends VerticalLayout
      * @param view     new view component
      * @return self instance to simplify replacing multiple views at one line
      */
-    @SuppressWarnings ( "unchecked" )
-    public TPTMultiView replaceView ( String viewName, Component view )
+    @SuppressWarnings("unchecked")
+    public TPTMultiView replaceView(String viewName, Component view)
     {
-        if ( isViewAvailable ( viewName ) )
+        if (isViewAvailable(viewName))
         {
-            fireViewRemovedMessage ( views.get ( currentView ) );
+            fireViewRemovedMessage(views.get(currentView));
 
-            if ( currentView != null && currentView.equalsIgnoreCase ( viewName ) )
+            if (currentView != null && currentView.equalsIgnoreCase(viewName))
             {
-                switchView ( null );
-                views.put ( viewName, view );
-                delayedViews.put ( viewName, ( Class<? extends Component> ) view.getClass () );
-                fireViewAttachedMessage ( view );
-                switchView ( viewName );
-            }
-            else
+                switchView(null);
+                views.put(viewName, view);
+                delayedViews.put(viewName, (Class<? extends Component>) view.getClass());
+                fireViewAttachedMessage(view);
+                switchView(viewName);
+            } else
             {
-                views.put ( viewName, view );
-                delayedViews.put ( viewName, ( Class<? extends Component> ) view.getClass () );
-                fireViewAttachedMessage ( view );
+                views.put(viewName, view);
+                delayedViews.put(viewName, (Class<? extends Component>) view.getClass());
+                fireViewAttachedMessage(view);
             }
             return this;
         }
-        throw new IllegalArgumentException ( String.format (
+        throw new IllegalArgumentException(String.format(
                 "View %s does not exists. If you want to add a new view, use method addView()",
-                viewName ) );
+                viewName));
     }
 
     /**
@@ -231,21 +232,21 @@ public class TPTMultiView extends VerticalLayout
      * @param viewName view name to remove.
      * @return self instance in order to simplify multiple removes at one line.
      */
-    public TPTMultiView removeView ( String viewName )
+    public TPTMultiView removeView(String viewName)
     {
-        if ( isViewAvailable ( viewName ) )
+        if (isViewAvailable(viewName))
         {
-            fireViewRemovedMessage ( views.get ( viewName ) );
-            if ( currentView != null && currentView.equalsIgnoreCase ( viewName ) )
+            fireViewRemovedMessage(views.get(viewName));
+            if (currentView != null && currentView.equalsIgnoreCase(viewName))
             {
-                switchView ( null );
+                switchView(null);
             }
-            views.remove ( viewName );
-            delayedViews.remove ( viewName );
+            views.remove(viewName);
+            delayedViews.remove(viewName);
             return this;
         }
-        throw new IllegalArgumentException (
-                String.format ( "View %s does not exists and thus cannot be removed.", viewName ) );
+        throw new IllegalArgumentException(
+                String.format("View %s does not exists and thus cannot be removed.", viewName));
     }
 
     /**
@@ -260,61 +261,59 @@ public class TPTMultiView extends VerticalLayout
      *               parameter, in case the view object being swithced to implements TPTView
      *               interface. If not - custom parameter will be simply ignored.
      */
-    public void switchView ( String viewId )
+    public void switchView(String viewId)
     {
-        final String viewName = ( !views.containsKey ( getPureViewName ( viewId ) ) && failsafeView != null ) ? failsafeView : getPureViewName ( viewId );
-        final String viewParameters = getViewParameters ( viewId );
+        final String viewName = (!views.containsKey(getPureViewName(viewId)) && failsafeView != null) ? failsafeView : getPureViewName(viewId);
+        final String viewParameters = getViewParameters(viewId);
 
-        if ( viewId == null )
+        if (currentView != null)
         {
-            if ( currentView != null )
-            {
-                removeAllComponents ();
-                fireViewDeactivatedMessage ( views.get ( currentView ), viewId );
-            }
-            currentView = null;
+            fireViewDeactivatedMessage(views.get(currentView), viewId);
         }
-        else if ( views.containsKey ( viewName ) )
+
+        if (viewId == null)
         {
-            if ( views.get ( viewName ) == null )
+            removeAllComponents();
+            currentView = null;
+        } else if (views.containsKey(viewName))
+        {
+            if (views.get(viewName) == null)
             {
                 try
                 {
-                    views.put ( viewName, delayedViews.get ( viewName ).newInstance () );
-                    fireViewAttachedMessage ( views.get ( viewName ) );
-                }
-                catch ( Throwable e )
+                    views.put(viewName, delayedViews.get(viewName).newInstance());
+                    fireViewAttachedMessage(views.get(viewName));
+                } catch (Throwable e)
                 {
-                    throw new RuntimeException ( "Cannot activate lazy view: " + e.getMessage (),
-                            e );
+                    throw new RuntimeException("Cannot activate lazy view: " + e.getMessage(),
+                            e);
                 }
             }
 
             // ADDENDUM by Remoun Metyas to avoid spurious detach & attach
             // if it's just the parameters that have changed.
-            if(!viewName.equals(currentView))
+            if (!viewName.equals(currentView))
             {
-              removeAllComponents ();
-              addComponent ( views.get ( viewName ) );
-              setExpandRatio ( views.get ( viewName ), 1.0f );
+                removeAllComponents();
+                addComponent(views.get(viewName));
+                setExpandRatio(views.get(viewName), 1.0f);
             }
 
-            fireViewActivatedMessage ( views.get ( viewName ), currentView, viewParameters );
+            fireViewActivatedMessage(views.get(viewName), currentView, viewParameters);
             currentView = viewName;
-        }
-        else
+        } else
         {
-            if ( !uriManagerEnabled )
+            if (!uriManagerEnabled)
             {
-                throw new IllegalArgumentException (
-                        String.format ( "View %s does not exists.", viewName ) );
+                throw new IllegalArgumentException(
+                        String.format("View %s does not exists.", viewName));
             }
         }
 
-        if ( uriManagerEnabled )
+        if (uriManagerEnabled)
         {
             lastChangedFragment = viewId;
-            uriManager.setFragment ( viewId );
+            uriManager.setFragment(viewId);
         }
     }
 
@@ -324,9 +323,9 @@ public class TPTMultiView extends VerticalLayout
      * @param viewName view name to check
      * @return TRUE, if the specified view name exists
      */
-    public boolean isViewAvailable ( String viewName )
+    public boolean isViewAvailable(String viewName)
     {
-        return views.containsKey ( getPureViewName ( viewName ) );
+        return views.containsKey(getPureViewName(viewName));
     }
 
     /**
@@ -336,10 +335,10 @@ public class TPTMultiView extends VerticalLayout
      * @return TRUE, if the specified view name exists and a view, associated with it is active,
      *         e.g. displayed ont he screen.
      */
-    public boolean isViewActive ( String viewName )
+    public boolean isViewActive(String viewName)
     {
-        return isViewAvailable ( viewName ) && currentView != null &&
-                currentView.equalsIgnoreCase ( viewName );
+        return isViewAvailable(viewName) && currentView != null &&
+                currentView.equalsIgnoreCase(viewName);
     }
 
     /**
@@ -349,14 +348,14 @@ public class TPTMultiView extends VerticalLayout
      * @return view component, associated with the specified name. If non-existing name is given, an
      *         IllegalArgumentException will be thrown.
      */
-    public Component getView ( String viewName )
+    public Component getView(String viewName)
     {
-        if ( isViewAvailable ( viewName ) )
+        if (isViewAvailable(viewName))
         {
-            return views.get ( viewName );
+            return views.get(viewName);
         }
-        throw new IllegalArgumentException (
-                String.format ( "View %s does not exists.", viewName ) );
+        throw new IllegalArgumentException(
+                String.format("View %s does not exists.", viewName));
     }
 
     /**
@@ -364,7 +363,7 @@ public class TPTMultiView extends VerticalLayout
      *
      * @return name of the view being active
      */
-    public String getCurrentViewName ()
+    public String getCurrentViewName()
     {
         return currentView;
     }
@@ -374,9 +373,9 @@ public class TPTMultiView extends VerticalLayout
      *
      * @return component of the current view
      */
-    public Component getCurrentView ()
+    public Component getCurrentView()
     {
-        return views.get ( currentView );
+        return views.get(currentView);
     }
 
     /**
@@ -385,27 +384,27 @@ public class TPTMultiView extends VerticalLayout
      * you'll need to remove the uri manager for some reason, please use explicit removal.
      */
     @Override
-    public void removeAllComponents ()
+    public void removeAllComponents()
     {
-        Iterator<Component> components = getComponentIterator ();
-        List<Component> componentsToRemove = new ArrayList<Component> ( 2 );
+        Iterator<Component> components = getComponentIterator();
+        List<Component> componentsToRemove = new ArrayList<Component>(2);
 
-        while ( components.hasNext () )
+        while (components.hasNext())
         {
-            final Component component = components.next ();
+            final Component component = components.next();
 
-            if ( component != uriManager )
+            if (component != uriManager)
             {
-                componentsToRemove.add ( component );
+                componentsToRemove.add(component);
             }
         }
 
-        for ( Component component : componentsToRemove )
+        for (Component component : componentsToRemove)
         {
-            removeComponent ( component );
+            removeComponent(component);
         }
 
-        componentsToRemove.clear ();
+        componentsToRemove.clear();
     }
 
     /**
@@ -415,13 +414,13 @@ public class TPTMultiView extends VerticalLayout
      * @return view name of the given component or null, if no such component found in the list of
      *         registered views.
      */
-    public String getViewName ( Component view )
+    public String getViewName(Component view)
     {
-        Collection<String> currentViews = Collections.unmodifiableCollection ( views.keySet () );
+        Collection<String> currentViews = Collections.unmodifiableCollection(views.keySet());
 
-        for ( String key : currentViews )
+        for (String key : currentViews)
         {
-            if ( views.get ( key ).equals ( view ) )
+            if (views.get(key).equals(view))
             {
                 return key;
             }
@@ -429,17 +428,17 @@ public class TPTMultiView extends VerticalLayout
         return null;
     }
 
-    public void fragmentChanged ( UriFragmentUtility.FragmentChangedEvent fragmentChangedEvent )
+    public void fragmentChanged(UriFragmentUtility.FragmentChangedEvent fragmentChangedEvent)
     {
-        if ( uriManagerEnabled &&
-                fragmentChangedEvent.getUriFragmentUtility ().getFragment () != null )
+        if (uriManagerEnabled &&
+                fragmentChangedEvent.getUriFragmentUtility().getFragment() != null)
         {
-            final String fragment = fragmentChangedEvent.getUriFragmentUtility ().getFragment ();
+            final String fragment = fragmentChangedEvent.getUriFragmentUtility().getFragment();
 
-            if ( !fragment.equals ( lastChangedFragment ) )
+            if (!fragment.equals(lastChangedFragment))
             {
                 lastChangedFragment = fragment;
-                switchView ( fragment );
+                switchView(fragment);
             }
         }
     }
@@ -461,7 +460,7 @@ public class TPTMultiView extends VerticalLayout
          * @param previousViewId ID of the previous view. Useful for building navigation or
          *                       historical browsing
          */
-        public void viewActivated ( String previousViewId, String parameters );
+        public void viewActivated(String previousViewId, String parameters);
 
         /**
          * Called when view is deactivated, e.g. becomes hidden from a user. This usually happens if
@@ -469,19 +468,19 @@ public class TPTMultiView extends VerticalLayout
          *
          * @param newViewId ID of the view that came at top
          */
-        public void viewDeactivated ( String newViewId );
+        public void viewDeactivated(String newViewId);
 
         /**
          * Called when a view is attached to a multiview component, e.g. when new view was added by
          * invoking addView method.
          */
-        public void viewAttached ();
+        public void viewAttached();
 
         /**
          * Called when a view is removed from a multiview component, e.g. when view is removed by
          * invoking a removeView method
          */
-        public void viewRemoved ();
+        public void viewRemoved();
     }
 
     /**
@@ -491,12 +490,12 @@ public class TPTMultiView extends VerticalLayout
      * @param view       view being activated (showing)
      * @param parameters parameters, passed to a view (if any)
      */
-    protected void fireViewActivatedMessage ( Component view, String previousViewId,
-                                              String parameters )
+    protected void fireViewActivatedMessage(Component view, String previousViewId,
+                                            String parameters)
     {
-        if ( view instanceof TPTView )
+        if (view instanceof TPTView)
         {
-            ( ( TPTView ) view ).viewActivated ( previousViewId, parameters );
+            ((TPTView) view).viewActivated(previousViewId, parameters);
         }
     }
 
@@ -506,11 +505,11 @@ public class TPTMultiView extends VerticalLayout
      *
      * @param view view being deactivated (hidden)
      */
-    protected void fireViewDeactivatedMessage ( Component view, String newViewId )
+    protected void fireViewDeactivatedMessage(Component view, String newViewId)
     {
-        if ( view instanceof TPTView )
+        if (view instanceof TPTView)
         {
-            ( ( TPTView ) view ).viewDeactivated ( newViewId );
+            ((TPTView) view).viewDeactivated(newViewId);
         }
     }
 
@@ -520,11 +519,11 @@ public class TPTMultiView extends VerticalLayout
      *
      * @param view new view being added to a multiview component (added)
      */
-    protected void fireViewAttachedMessage ( Component view )
+    protected void fireViewAttachedMessage(Component view)
     {
-        if ( view instanceof TPTView )
+        if (view instanceof TPTView)
         {
-            ( ( TPTView ) view ).viewAttached ();
+            ((TPTView) view).viewAttached();
         }
     }
 
@@ -534,11 +533,11 @@ public class TPTMultiView extends VerticalLayout
      *
      * @param view view being removed from a multiview component (removed)
      */
-    protected void fireViewRemovedMessage ( Component view )
+    protected void fireViewRemovedMessage(Component view)
     {
-        if ( view instanceof TPTView )
+        if (view instanceof TPTView)
         {
-            ( ( TPTView ) view ).viewRemoved ();
+            ((TPTView) view).viewRemoved();
         }
     }
 
@@ -549,20 +548,19 @@ public class TPTMultiView extends VerticalLayout
      * @param viewName view  name or view name,combined with the view parameters
      * @return always the pure view name without parameters
      */
-    protected String getPureViewName ( String viewName )
+    protected String getPureViewName(String viewName)
     {
-        if ( viewName == null)
+        if (viewName == null)
         {
             return "";
         }
-        
-        if ( !viewName.contains ( "/" ) )
+
+        if (!viewName.contains("/"))
         {
             return viewName;
-        }
-        else
+        } else
         {
-            return viewName.substring ( 0, viewName.indexOf ( "/" ) );
+            return viewName.substring(0, viewName.indexOf("/"));
         }
     }
 
@@ -573,15 +571,14 @@ public class TPTMultiView extends VerticalLayout
      * @return parameters , extracted from the view name if it was combined with the parameters. If
      *         no parameters present, an empty string will be returned.
      */
-    protected String getViewParameters ( String viewName )
+    protected String getViewParameters(String viewName)
     {
-        if ( viewName == null || !viewName.contains ( "/" ) )
+        if (viewName == null || !viewName.contains("/"))
         {
             return "";
-        }
-        else
+        } else
         {
-            return viewName.substring ( viewName.indexOf ( "/" ) + 1, viewName.length () );
+            return viewName.substring(viewName.indexOf("/") + 1, viewName.length());
         }
     }
 }

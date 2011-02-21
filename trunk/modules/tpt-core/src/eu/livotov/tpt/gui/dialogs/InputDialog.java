@@ -114,6 +114,8 @@ public class InputDialog extends AbstractDialog implements Button.ClickListener
 
     protected void finishDialog ( OptionKind result )
     {
+        finishDialogProcessStarted=true;
+
         try
         {
             hideDialog ();
@@ -132,7 +134,10 @@ public class InputDialog extends AbstractDialog implements Button.ClickListener
 
     public void windowClose ( CloseEvent closeEvent )
     {
-        finishDialog ( OptionKind.CANCEL );
+        if (!finishDialogProcessStarted)
+        {
+            finishDialog ( OptionKind.CANCEL );
+        }
     }
 
     @Override
