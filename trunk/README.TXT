@@ -3,7 +3,7 @@
 
                 TOOLKIT PRODUCTIVITY TOOLS
       
-            version 1.1.1 , released 26.04.2010
+            version 1.2.0 , released 31.01.2011
 
    ( for release notes / what's changed please see below )
 
@@ -72,11 +72,19 @@ Legend:
 ? - Information
 
 
+31.01.2011 v.1.2.0
+
+? - PDF Viewer removed from tpt project and moved to a separate add-on VPDF
+? - Aligned with Vaadin 6.5.0
+
+
 26.04.2010 v.1.1.1
 
-+ - Removed non-required jar files from IcePDF OpenSource edition bundled package to reduce distribution size.
-+ - DocumentViewer is equipped with deps protection code - if IcePDF files are not found, it will render an appropriate message instead of raising NoClassDefFound error.
+* - Fixed issues: #4, #5, #6
++ - Removed optional jar files from IcePDF OpenSource edition bundled package to reduce distribution size.
++ - DocumentViewer has not the IcePDF deps protection code - if IcePDF files are not present in the classpath, it will render an appropriate message instead of raising NoClassDefFound error.
 + - Dependency jar files are also copied to distribution "deps" folder to be more visible.
++ - i18n translation files should be plain text utf-8 files now - no native2ascii required anymore (according to issue #6)
 ? - Added dependencies section into the developer handbook to more transparetly describe the external dependencies.
 
 
