@@ -31,6 +31,7 @@ import java.io.IOException;
 public abstract class AbstractDialog extends TPTWindow
 {
     protected Window parentWindow;
+    protected volatile boolean finishDialogProcessStarted;
 
     public AbstractDialog ( Application app )
     {
@@ -64,13 +65,20 @@ public abstract class AbstractDialog extends TPTWindow
 
     public void showDialog ()
     {
+        finishDialogProcessStarted = false;
         parentWindow.addWindow ( this );
         center ();
     }
 
     public void hideDialog ()
     {
-        parentWindow.removeWindow ( this );
+        try
+        {
+            parentWindow.removeWindow ( this );
+        } catch (Throwable err)
+        {
+            err.printStackTrace();
+        }
     }
 
 }
