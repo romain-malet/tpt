@@ -1,0 +1,41 @@
+
+<project name="STOR-M 3" default="dist">
+
+    <!--
+       This script builds all archive system components, producing a complete, ready to use and
+       deploy solution.
+    -->
+
+
+    <dirname property="base.dir" file="${ant.file}" />
+
+    <property file="${base.dir}${file.separator}local.properties" />
+    <property file="${base.dir}${file.separator}build.properties" />
+    <property file="${base.dir}${file.separator}version.properties" />
+
+
+    <!-- Common sets and paths -->
+    <target name="clean" description="Cleans all output stuff from all components">
+        <subant antfile="build.xml" buildpath="modules/tpt-core" target="clean"/>
+        <subant antfile="build.xml" buildpath="modules/tpt-demo" target="clean"/>
+    </target>
+
+    <target name="dist" description="Compile, test and release all archive system components"
+            depends="clean,update-version">
+        <subant antfile="build.xml" buildpath="modules/tpt-core" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/tpt-demo" target="default"/>
+    </target>
+
+    <target name="make" description="Quick compile and test all archive system components"
+            depends="clean,update-version">
+        <subant antfile="build.xml" buildpath="modules/tpt-core" target="default"/>
+        <subant antfile="build.xml" buildpath="modules/tpt-demo" target="default"/>
+    </target>
+
+    <target name="update-version">
+    </target>
+
+    <target name="run:tests">
+    </target>
+
+</project>
